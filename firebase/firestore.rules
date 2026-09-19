@@ -1,0 +1,78 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && 
+        (request.auth.token.role == 'admin' || request.auth.token.role == 'operator');
+    }
+
+    function isRescueTeam() {
+      return isAuthenticated() && 
+        (request.auth.token.role == 'rescue' || isAdmin());
+    }
+
+    // Publicly readable telemetry, zones and active alerts
+    match /flood_zones/{zoneId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /roads/{roadId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /alerts/{alertId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /flood_predictions/{predictionId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Sensors metadata
+    match /sensor_devices/{sensorId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Citizen reports: any citizen can create, operators can verify and update
+    match /citizen_reports/{reportId} {
+      allow read: if true;
+      allow create: if isAuthenticated() || true; // Allow anonymous reports during disaster
+      allow update, delete: if isAdmin() || (isAuthenticated() && resource.data.userId == request.auth.uid);
+    }
+
+    // Emergency requests / SOS
+    match /emergency_requests/{requestId} {
+      allow read: if isRescueTeam() || (isAuthenticated() && resource.data.citizenUid == request.auth.uid);
+      allow create: if true; // SOS must always succeed even unauthenticated
+      allow update: if isRescueTeam();
+    }
+
+    // Emergency resources (boats, pumps, ambulances)
+    match /emergency_resources/{resourceId} {
+      allow read: if isAuthenticated();
+      allow write: if isRescueTeam();
+    }
+
+    // User profiles
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Analytics and Historical Events
+    match /historical_events/{eventId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}

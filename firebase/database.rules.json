@@ -1,0 +1,19 @@
+{
+  "rules": {
+    "sensors": {
+      ".read": true,
+      "$sensorId": {
+        ".write": true,
+        ".indexOn": ["timestamp", "deviceId", "waterLevel"]
+      }
+    },
+    "simulation": {
+      ".read": true,
+      ".write": true
+    },
+    "live_alerts": {
+      ".read": true,
+      ".write": "auth != null"
+    }
+  }
+}
