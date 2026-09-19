@@ -1,0 +1,35 @@
+{
+  "features": [
+    "elevation_meters",
+    "rain_intensity_mm_hr",
+    "cumulative_rainfall_3h_mm",
+    "soil_saturation_percent",
+    "drainage_capacity_m3s",
+    "drainage_saturation_percent",
+    "current_water_level_cm",
+    "water_level_rise_rate_10m"
+  ],
+  "feature_importances": {
+    "elevation_meters": 0.0496,
+    "rain_intensity_mm_hr": 0.1362,
+    "cumulative_rainfall_3h_mm": 0.046,
+    "soil_saturation_percent": 0.0348,
+    "drainage_capacity_m3s": 0.0123,
+    "drainage_saturation_percent": 0.2277,
+    "current_water_level_cm": 0.3233,
+    "water_level_rise_rate_10m": 0.1702
+  },
+  "risk_classes": {
+    "0": "LOW",
+    "1": "MODERATE",
+    "2": "HIGH",
+    "3": "CRITICAL"
+  },
+  "metrics": {
+    "classification_accuracy": 0.9717,
+    "forecaster_mae_15m": 0.3069,
+    "forecaster_mae_30m": 0.5599,
+    "forecaster_mae_60m": 0.9816,
+    "forecaster_r2": 0.9985
+  }
+}
